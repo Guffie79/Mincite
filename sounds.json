@@ -1,5 +1,0 @@
-{
-  "animaux": ["chat.mp3", "chien.mp3"],
-  "objets": ["porte.mp3", "verre.mp3"],
-  "voix": ["rire.mp3"]
-}
