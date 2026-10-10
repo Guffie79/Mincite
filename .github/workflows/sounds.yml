@@ -1,1 +1,39 @@
+name: Générer sounds.json
 
+on:
+  push:
+    paths:
+      - 'sounds/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scanner les sons
+        run: |
+          python3 - <<'EOF'
+          import os, json
+          exts = ('.mp3', '.ogg', '.wav')
+          data = {}
+          for cat in sorted(os.listdir('sounds')):
+              path = os.path.join('sounds', cat)
+              if os.path.isdir(path):
+                  files = sorted(f for f in os.listdir(path) if f.lower().endswith(exts))
+                  if files:
+                      data[cat] = files
+          with open('sounds/sounds.json', 'w', encoding='utf-8') as f:
+              json.dump(data, f, ensure_ascii=False, indent=2)
+          EOF
+
+      - name: Commit si changement
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sounds/sounds.json
+          git diff --staged --quiet || (git commit -m "chore: mise à jour de sounds.json" && git push)
