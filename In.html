@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mincite</title>
+<style>
+:root{--bg:#0a0e1f;--card:#131a36cc;--line:#2b3566;--v:#7c5cff;--p:#ff4fa3;--g:#35f0c0;--t:#eef0ff;--m:#8b93c4}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;color:var(--t);font:15px/1.4 "Segoe UI",system-ui,sans-serif;min-height:100vh;background:radial-gradient(circle at 15% 0,#2a1b6e55,transparent 45%),radial-gradient(circle at 90% 30%,#ff4fa322,transparent 40%),var(--bg) fixed}
+#top{position:sticky;top:0;z-index:9;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#0a0e1fd9;backdrop-filter:blur(8px);border-bottom:1px solid #ffffff10}
+#top b{font-size:18px;background:linear-gradient(90deg,var(--v),var(--p));-webkit-background-clip:text;background-clip:text;color:transparent}#top div{display:flex;gap:8px;align-items:center}
+main{max-width:600px;margin:0 auto;padding:6px 14px 40px}
+.screen,.pn{display:none}.screen.on,.pn.on{display:block;animation:in .4s cubic-bezier(.2,.8,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+h1{font-size:44px;margin:22px 0 2px;letter-spacing:-1px;background:linear-gradient(90deg,var(--v),var(--p));-webkit-background-clip:text;background-clip:text;color:transparent}h2{font-size:19px;margin:4px 0 10px}
+.mut{color:var(--m)}.center{text-align:center}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0;backdrop-filter:blur(6px);box-shadow:0 8px 30px #0006}
+button{font:inherit;color:var(--t);background:#1d2650;border:1px solid var(--line);padding:8px 15px;border-radius:10px;cursor:pointer;transition:transform .12s,border-color .12s,box-shadow .12s}
+button:hover{border-color:var(--v);box-shadow:0 0 14px #7c5cff55;transform:translateY(-1px)}button:active{transform:scale(.95)}
+button.p{background:linear-gradient(90deg,var(--v),var(--p));border:0;font-weight:700}
+button:disabled{opacity:.4;pointer-events:none}
+input,select{font:inherit;color:var(--t);background:#0d1330;border:1px solid var(--line);border-radius:10px;padding:9px 11px;max-width:100%}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--v);outline-offset:1px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}.row>input{flex:1;min-width:120px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:99px;border:1px solid var(--line);background:#1a2250;margin:2px;font-size:14px}
+.chip.ok{border-color:var(--g);color:var(--g)}.chip.sel{background:var(--v);border-color:var(--v)}button.chip{padding:4px 11px}
+.av{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font-weight:700;font-size:14px;color:#fff;flex:none}
+.code{font:700 34px monospace;letter-spacing:8px;color:var(--g)}.err{color:#ff7a9c;min-height:20px;margin:6px 0}
+.steps{display:flex;gap:5px;margin:8px 0}.steps span{flex:1;text-align:center;font-size:12px;padding:6px 0;border-radius:8px;background:#1a2250;color:var(--m);transition:.3s}
+.steps span.on{background:linear-gradient(90deg,var(--v),var(--p));color:#fff;font-weight:700}
+#timerbox{display:flex;align-items:center;gap:10px;margin:6px 0}#tm{font-weight:700;min-width:36px;text-align:right}
+.bar{flex:1;height:7px;background:#1a2250;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--v),var(--p));border-radius:9px;transition:width .3s}
+canvas.viz{width:100%;height:80px;display:block;margin:6px 0}
+.snd{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:10px}.snd>span{flex:1}
+.recb{width:84px;height:84px;border-radius:50%;font-size:30px;border:3px solid var(--p);background:#2a1040;color:var(--p);margin:8px 0}
+.recb.on{background:var(--p);color:#fff;animation:pulse 1s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #ff4fa399}100%{box-shadow:0 0 0 22px #ff4fa300}}
+.ring{width:150px;height:150px;transform:rotate(-90deg)}.ring text{transform:rotate(90deg);transform-origin:50px 50px;fill:var(--t);font:700 30px "Segoe UI",sans-serif}
+.rb{fill:none;stroke:#1a2250;stroke-width:8}.rf{fill:none;stroke:var(--g);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .9s ease,stroke .9s}
+#now{display:flex;align-items:center;justify-content:center;gap:10px;font-size:22px;font-weight:700;margin:4px 0}
+#cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:10px}
+.pc{display:flex;align-items:center;gap:8px;padding:10px;border-radius:12px;background:#1a2250;border:1px solid var(--line);opacity:.55;transition:.3s}.pc b{flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis}.pc .sc{color:var(--g);font-weight:700}
+.pc.cur{opacity:1;transform:scale(1.06);border-color:var(--p);box-shadow:0 0 22px #ff4fa355}.pc.done{opacity:1}
+.eq{display:inline-flex;align-items:flex-end;gap:2px;width:22px;height:18px}.spin{width:42px;height:42px;border-radius:50%;border:4px solid #1a2250;border-top-color:var(--p);margin:10px auto;animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--g);color:#06251d;padding:8px 16px;border-radius:10px;font-weight:700;z-index:20}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div id="top"><b>Mincite</b><div><button id="mute" title="Muet">🔊</button><input id="vol" type="range" min="0" max="1" step=".05" value=".8" style="width:90px;padding:0"></div></div>
+<main>
+<section id="home" class="screen on">
+ <h1>Mincite</h1><p class="mut">Un son. Une seule écoute. Reproduis-le avec ta voix : le jeu note qui s'en approche le plus.</p>
+ <div class="card">
+  <input id="name" placeholder="Ton pseudo" maxlength="14" autocomplete="off" style="width:100%">
+  <div class="row"><button class="p" id="create">Créer une partie</button></div>
+  <div class="row"><input id="code" placeholder="Code (5 caractères)" maxlength="5" autocapitalize="characters" autocomplete="off"><button id="join">Rejoindre</button></div>
+  <div class="err" id="err"></div><div class="mut" style="font-size:13px">🎤 Le micro est nécessaire (1 à 10 joueurs).</div>
+ </div>
+</section>
+
+<section id="lobby" class="screen">
+ <div class="card center"><div class="mut">Code de la partie</div><div class="code" id="codeV"></div>
+  <div class="row" style="justify-content:center"><button id="cpCode">Copier le code</button><button id="cpLink">Copier le lien</button></div></div>
+ <div class="card"><h2>Joueurs <span class="mut" id="pcount"></span></h2><div id="plist"></div></div>
+ <div class="card" id="setH"><h2>Réglages</h2>
+  <div class="row"><label>Manches <select id="sR"><option>3</option><option>5</option><option>8</option><option>10</option></select></label>
+  <label>Temps d'imitation <select id="sD"><option value="15">15 s</option><option value="20">20 s</option><option value="30">30 s</option><option value="45">45 s</option></select></label></div>
+  <div class="mut">Catégories de sons à imiter</div><div id="sC"></div></div>
+ <p class="mut" id="waitH"></p>
+ <div class="row"><button class="p" id="startB">Lancer la partie</button><button id="leave">Quitter</button></div>
+</section>
+
+<section id="game" class="screen">
+ <div class="steps"><span>Écoute</span><span>Imitation</span><span>Scène</span><span>Résultats</span></div>
+ <div id="timerbox" hidden><div class="bar"><i id="bar" style="width:100%"></i></div><span id="tm"></span></div>
+
+ <div class="pn card center" id="p-load"><h2 id="lp"></h2><div class="spin"></div><p class="mut" id="lp2"></p></div>
+
+ <div class="pn card center" id="p-listen"><h2 id="rn"></h2><p class="mut">Écoute bien : un seul passage !</p><canvas class="viz" data-s="master" width="400" height="100"></canvas></div>
+
+ <div class="pn" id="p-compose"><div class="card center"><h2>À toi : reproduis le son avec ta voix</h2>
+  <canvas class="viz" data-s="mic" width="400" height="100"></canvas>
+  <button class="recb" id="rec">●</button><div class="mut" id="rst"></div>
+  <div class="row" style="justify-content:center"><button id="hear">▶ Réécouter</button><button class="p" id="val">Valider</button></div></div>
+  <div class="okbar"></div></div>
+
+ <div class="pn card center" id="p-wait"><h2>Analyse des imitations…</h2><div class="spin"></div></div>
+
+ <div class="pn card center" id="p-stage"><canvas class="viz" data-s="master" width="400" height="70"></canvas>
+  <div id="now"></div>
+  <svg class="ring" viewBox="0 0 100 100"><circle class="rb" cx="50" cy="50" r="45"/><circle class="rf" id="rf" cx="50" cy="50" r="45" stroke-dasharray="283" stroke-dashoffset="283"/><text id="rn2" x="50" y="60" text-anchor="middle">?</text></svg>
+  <div class="mut">Ressemblance avec l'original</div><div id="cards"></div></div>
+
+ <div class="pn" id="p-res"><div class="card"><h2>Manche terminée</h2><button id="orig">🎧 Réécouter le son original</button><div id="rl" style="margin-top:8px"></div></div>
+  <div class="card"><h2>Classement</h2><div id="sc"></div></div>
+  <div class="row"><button class="p" id="next">Manche suivante</button><span class="mut" id="nw">En attente de l'hôte…</span></div></div>
+</section>
+
+<section id="end" class="screen">
+ <div class="card center"><h1 style="font-size:34px">🏆 Classement final</h1><div id="fin" style="text-align:left"></div></div>
+ <div class="row"><button class="p" id="again">Rejouer (retour au lobby)</button><button id="quit">Quitter</button></div>
+</section>
+</main>
+<div id="toast" hidden></div>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nice=n=>n.split('/').pop().replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ');
+const toAB=x=>!x?null:x instanceof ArrayBuffer?x:x.buffer?x.buffer.slice(x.byteOffset,x.byteOffset+x.byteLength):null;
+const av=n=>{let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))%360;return `<span class="av" style="background:hsl(${h} 65% 50%)">${esc(n[0]||'?').toUpperCase()}</span>`};
+const shuffle=a=>a.sort(()=>Math.random()-.5);
+/* Réglage de la notation : plus l'écart (HI-LO) est petit, plus c'est sévère/généreux */
+const SC_LO=.2,SC_HI=.6;
+let ctx,master,mastAn,micAn,MS,MR,chunks=[],take=null,recording=false,pend=false,maxT=0,vol=.8,muted=false,srcs=[],CAT={},BUF={},
+peer,conns={},hostConn=null,isHost=false,code='',me={id:'',name:''},S={players:[],set:{rounds:5,dur:30,cats:[]},phase:'lobby'},
+G={used:[],round:0,subs:{},recs:{},entries:[],target:'',timer:0},off=0,best=1e9,E=[],P=[],locked=false,ph='',tI=0,tgt='';
+const hostNow=()=>Date.now()+off;
+
+/* ---------- UI ---------- */
+function show(id){$$('.screen').forEach(s=>s.classList.toggle('on',s.id===id))}
+function err(m){$('#err').textContent=m||''}
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,1800)}
+function panel(id,step){$$('.pn').forEach(p=>p.classList.toggle('on',p.id===id));$$('.steps span').forEach((s,i)=>s.classList.toggle('on',i+1===step));show('game');if(id!=='p-compose')stopTimer()}
+function startTimer(endAt,total){clearInterval(tI);$('#timerbox').hidden=false;const f=()=>{const r=Math.max(0,endAt-hostNow());$('#tm').textContent=Math.ceil(r/1000)+'s';$('#bar').style.width=Math.min(100,r/(total*1000)*100)+'%';if(r<=0){clearInterval(tI);if(ph==='compose')validate()}};f();tI=setInterval(f,250)}
+function stopTimer(){clearInterval(tI);$('#timerbox').hidden=true}
+function loop(){requestAnimationFrame(loop);$$('canvas.viz').forEach(c=>{if(!c.offsetParent)return;const g=c.getContext('2d'),an=c.dataset.s==='mic'?micAn:mastAn;g.clearRect(0,0,c.width,c.height);if(!an)return;
+ const d=new Uint8Array(an.frequencyBinCount);an.getByteFrequencyData(d);const n=28,w=c.width/n,gr=g.createLinearGradient(0,c.height,0,0);gr.addColorStop(0,'#7c5cff');gr.addColorStop(1,'#ff4fa3');g.fillStyle=gr;
+ for(let i=0;i<n;i++){const h=Math.max(4,d[Math.floor(i*d.length*.7/n)]/255*c.height);g.beginPath();g.roundRect(i*w+3,c.height-h,w-6,h,4);g.fill()}})}
+loop();
+function setRing(s){const rf=$('#rf');rf.style.strokeDashoffset=283*(1-(s||0)/100);rf.style.stroke=`hsl(${(s||0)*1.2} 85% 58%)`;if(s==null){$('#rn2').textContent='?';return}
+ const t0=performance.now(),f=t=>{const k=Math.min(1,(t-t0)/900);$('#rn2').textContent=Math.round(s*k);if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+
+/* ---------- Audio ---------- */
+function initAudio(){if(!ctx){ctx=new(window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();mastAn=ctx.createAnalyser();mastAn.fftSize=128;master.connect(mastAn);mastAn.connect(ctx.destination);setVol()}ctx.resume()}
+function setVol(){master.gain.value=muted?0:vol;$('#mute').textContent=muted||!vol?'🔇':'🔊'}
+function playAt(n,delay){const b=BUF[n];if(!b)return 0;const s=ctx.createBufferSource();s.buffer=b;s.connect(master);s.start(ctx.currentTime+Math.max(0,delay));srcs.push(s);s.onended=()=>srcs=srcs.filter(x=>x!==s);return b.duration}
+function stopAll(){srcs.forEach(s=>{try{s.stop()}catch{}});srcs=[]}
+async function loadCats(){const r=await fetch('sounds/sounds.json?'+Date.now());if(!r.ok)throw 0;CAT=await r.json()}
+async function loadOne(n){if(BUF[n])return;const r=await fetch('sounds/'+n.split('/').map(encodeURIComponent).join('/'));if(!r.ok)throw 0;BUF[n]=await ctx.decodeAudioData(await r.arrayBuffer())}
+async function getMic(){if(MS)return true;try{MS=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});micAn=ctx.createAnalyser();micAn.fftSize=128;ctx.createMediaStreamSource(MS).connect(micAn);return true}catch{return false}}
+$('#mute').onclick=()=>{initAudio();muted=!muted;setVol()};
+$('#vol').oninput=e=>{initAudio();vol=+e.target.value;muted=false;setVol()};
+
+/* ---------- Notation automatique (côté hôte) ---------- */
+const FS=16000,NF=512,HOP=160,NM=26;let MELF=null,HANN=null;
+function initDSP(){HANN=Float32Array.from({length:NF},(_,i)=>.5-.5*Math.cos(2*Math.PI*i/(NF-1)));
+ const mel=f=>2595*Math.log10(1+f/700),imel=m=>700*(10**(m/2595)-1),lo=mel(80),hi=mel(7600);
+ const pt=Array.from({length:NM+2},(_,i)=>Math.floor((NF+1)*imel(lo+(hi-lo)*i/(NM+1))/FS));MELF=[];
+ for(let m=1;m<=NM;m++){const f=new Float32Array(NF/2+1);for(let k=pt[m-1];k<pt[m];k++)f[k]=(k-pt[m-1])/(pt[m]-pt[m-1]||1);for(let k=pt[m];k<=pt[m+1];k++)f[k]=(pt[m+1]-k)/(pt[m+1]-pt[m]||1);MELF.push(f)}}
+function fft(re,im){const n=re.length;for(let i=1,j=0;i<n;i++){let b=n>>1;for(;j&b;b>>=1)j^=b;j^=b;if(i<j){[re[i],re[j]]=[re[j],re[i]];[im[i],im[j]]=[im[j],im[i]]}}
+ for(let l=2;l<=n;l<<=1){const a=-2*Math.PI/l,wr=Math.cos(a),wi=Math.sin(a);for(let i=0;i<n;i+=l){let cr=1,ci=0;for(let j=0;j<l/2;j++){const u=i+j,v=u+l/2,tr=re[v]*cr-im[v]*ci,ti=re[v]*ci+im[v]*cr;re[v]=re[u]-tr;im[v]=im[u]-ti;re[u]+=tr;im[u]+=ti;const t=cr*wr-ci*wi;ci=cr*wi+ci*wr;cr=t}}}}
+async function mono16(b){const oc=new OfflineAudioContext(1,Math.ceil(b.duration*FS),FS),s=oc.createBufferSource();s.buffer=b;s.connect(oc.destination);s.start();return(await oc.startRendering()).getChannelData(0)}
+function feats(x){if(!MELF)initDSP();const nf=Math.floor((x.length-NF)/HOP)+1;if(nf<8)return null;
+ const re=new Float32Array(NF),im=new Float32Array(NF),F=[],en=[],ce=[];
+ for(let t=0;t<nf;t++){for(let i=0;i<NF;i++){re[i]=x[t*HOP+i]*HANN[i];im[i]=0}fft(re,im);
+  const Pw=new Float32Array(NF/2+1);let sp=0,sk=0;for(let k=0;k<=NF/2;k++){Pw[k]=re[k]*re[k]+im[k]*im[k];sp+=Pw[k];sk+=k*Pw[k]}
+  const lm=MELF.map(f=>{let s=0;for(let k=0;k<f.length;k++)if(f[k])s+=f[k]*Pw[k];return Math.log(s+1e-9)}),c=[];
+  for(let n=1;n<=12;n++){let s=0;for(let m=0;m<NM;m++)s+=lm[m]*Math.cos(Math.PI*n*(m+.5)/NM);c.push(s)}
+  F.push(c);en.push(10*Math.log10(sp+1e-9));ce.push(sk/(sp+1e-9))}
+ const mx=Math.max(...en);if(mx<15)return null;let a=0,b=nf-1;while(a<b&&en[a]<mx-30)a++;while(b>a&&en[b]<mx-30)b--;if(b-a<6)return null;
+ const R={F:F.slice(a,b+1),en:en.slice(a,b+1),ce:ce.slice(a,b+1),dur:(b-a+1)*HOP/FS},mean=Array(12).fill(0);
+ R.F.forEach(c=>c.forEach((v,k)=>mean[k]+=v/R.F.length));R.F.forEach(c=>c.forEach((v,k)=>c[k]=v-mean[k]));
+ R.N=R.F.map(c=>Math.hypot(...c));return R}
+const dot=(u,v)=>{let d=0;for(let k=0;k<12;k++)d+=u[k]*v[k];return d};
+function dtw(A,B){const n=A.F.length,m=B.F.length,W=Math.ceil(Math.max(n,m)*.3),w=m+1,D=new Float32Array((n+1)*w).fill(1e9);D[0]=0;
+ for(let i=1;i<=n;i++){const c=i*m/n,j0=Math.max(1,Math.floor(c-W)),j1=Math.min(m,Math.ceil(c+W));
+  for(let j=j0;j<=j1;j++)D[i*w+j]=1-dot(A.F[i-1],B.F[j-1])/(A.N[i-1]*B.N[j-1]+1e-9)+Math.min(D[(i-1)*w+j],D[i*w+j-1],D[(i-1)*w+j-1])}
+ const path=[];let i=n,j=m;while(i>0&&j>0){path.push([i-1,j-1]);const a=D[(i-1)*w+j-1],b=D[(i-1)*w+j],d=D[i*w+j-1];if(a<=b&&a<=d){i--;j--}else if(b<d)i--;else j--}return path}
+const cl=v=>Math.max(0,Math.min(1,v));
+function pear(a,b){const n=a.length,ma=a.reduce((s,v)=>s+v,0)/n,mb=b.reduce((s,v)=>s+v,0)/n;let sab=0,saa=0,sbb=0;for(let i=0;i<n;i++){const x=a[i]-ma,y=b[i]-mb;sab+=x*y;saa+=x*x;sbb+=y*y}return sab/Math.sqrt(saa*sbb+1e-9)}
+async function score(T,ab){const R=feats(await mono16(ab));if(!R||!T)return 0;const path=dtw(T,R);if(!path.length)return 0;let sim=0;path.forEach(([i,j])=>sim+=dot(T.F[i],R.F[j])/(T.N[i]*R.N[j]+1e-9));sim/=path.length;
+ const pe=pear(path.map(p=>T.en[p[0]]),path.map(p=>R.en[p[1]])),pc=pear(path.map(p=>T.ce[p[0]]),path.map(p=>R.ce[p[1]])),df=Math.min(T.dur,R.dur)/Math.max(T.dur,R.dur);
+ const raw=(.5*cl(sim)+.25*cl(pe)+.25*cl(pc))*df**.7;return Math.round(100*cl((raw-SC_LO)/(SC_HI-SC_LO)))}
+
+/* ---------- Réseau ---------- */
+const genCode=()=>{const a='ABCDEFGHJKMNPQRSTUVWXYZ23456789';return Array.from({length:5},()=>a[Math.random()*a.length|0]).join('')};
+function pname(){const n=$('#name').value.replace(/[<>]/g,'').trim().slice(0,14);if(!n){err('Entre un pseudo.');return ''}try{localStorage.setItem('bn',n)}catch{}return n}
+function resetHome(m){stopAll();stopTimer();stopRec();clearTimeout(G.timer);hostConn=null;try{peer&&peer.destroy()}catch{}peer=null;conns={};isHost=false;S.phase='lobby';show('home');err(m)}
+function bcast(m){Object.values(conns).forEach(c=>c.open&&c.send(m));onMsg(m)}
+function toHost(m){isHost?hostMsg('host',m):hostConn&&hostConn.open&&hostConn.send(m)}
+function pushState(){bcast({t:'state',players:S.players,set:S.set})}
+const MICERR='Micro refusé : autorise-le dans les réglages du navigateur, puis réessaie.';
+
+async function create(){const n=pname();if(!n)return;err('');initAudio();if(!await getMic())return err(MICERR);
+ try{await loadCats()}catch{return err("Impossible de charger sounds/sounds.json (voir l'Action GitHub).")}
+ isHost=true;me={id:'host',name:n};code=genCode();peer=new Peer('mincite-'+code);
+ peer.on('open',()=>{S={players:[{id:'host',name:n,score:0,ok:false,rdy:false}],set:{rounds:5,dur:30,cats:Object.keys(CAT)},phase:'lobby'};show('lobby');renderState()});
+ peer.on('connection',c=>{c.on('data',m=>onHostData(c,m));c.on('close',()=>drop(c))});
+ peer.on('disconnected',()=>{try{peer.reconnect()}catch{}});
+ peer.on('error',e=>{if(e.type==='unavailable-id'){peer.destroy();create()}else resetHome('Erreur réseau : '+e.type)})}
+async function join(){const n=pname();if(!n)return;const cd=$('#code').value.trim().toUpperCase();if(cd.length!==5)return err('Le code fait 5 caractères.');
+ err('');initAudio();if(!await getMic())return err(MICERR);loadCats().catch(()=>{});me={id:'',name:n};isHost=false;best=1e9;off=0;peer=new Peer();
+ peer.on('open',()=>{const c=peer.connect('mincite-'+cd,{reliable:true});hostConn=c;let ok=0;
+  const to=setTimeout(()=>{if(!ok)resetHome("Connexion impossible : l'hôte ne répond pas.")},10000);
+  c.on('open',()=>{ok=1;clearTimeout(to);code=cd;c.send({t:'join',name:n});let k=0;const pg=setInterval(()=>{if(hostConn!==c||k++>7)return clearInterval(pg);c.send({t:'ping',c:Date.now()})},300)});
+  c.on('data',onMsg);c.on('close',()=>{if(hostConn===c)resetHome("L'hôte s'est déconnecté.")})});
+ peer.on('error',e=>resetHome(e.type==='peer-unavailable'?'Code invalide : aucune partie trouvée.':'Erreur réseau : '+e.type))}
+
+/* ---------- Hôte : autorité ---------- */
+const uniq=n=>{let r=n,i=2;while(S.players.some(p=>p.name===r))r=n+i++;return r};
+function onHostData(c,m){
+ if(m.t==='join'){if(c.pid)return;
+  if(S.phase!=='lobby'){c.send({t:'err',m:'La partie a déjà commencé.'});return void setTimeout(()=>c.close(),400)}
+  if(S.players.length>=10){c.send({t:'err',m:'La partie est pleine (10 joueurs max).'});return void setTimeout(()=>c.close(),400)}
+  c.pid=c.peer;conns[c.pid]=c;const nm=uniq(String(m.name||'Joueur').replace(/[<>]/g,'').trim().slice(0,14)||'Joueur');
+  S.players.push({id:c.pid,name:nm,score:0,ok:false,rdy:false});c.send({t:'welcome',id:c.pid,name:nm});pushState();return}
+ if(!c.pid)return;if(m.t==='ping')return c.send({t:'pong',c:m.c,h:Date.now()});hostMsg(c.pid,m)}
+function drop(c){if(!c.pid)return;delete conns[c.pid];S.players=S.players.filter(p=>p.id!==c.pid);delete G.subs[c.pid];delete G.recs[c.pid];pushState();if(S.phase!=='lobby'&&S.phase!=='end')check()}
+function hostMsg(id,m){const p=S.players.find(x=>x.id===id);if(!p)return;
+ if(m.t==='ready'&&S.phase==='prep'){p.rdy=true;check()}
+ else if(m.t==='submit'&&S.phase==='compose'&&!G.subs[id]){const ab=toAB(m.buf);G.recs[id]=ab&&ab.byteLength<3e6?{buf:ab,mime:m.mime}:null;G.subs[id]=1;p.ok=true;pushState();check()}}
+function check(){const ps=S.players;if(S.phase==='prep'&&ps.every(p=>p.rdy))toListen();else if(S.phase==='compose'&&ps.every(p=>G.subs[p.id]))toScore()}
+function startGame(){if(!S.players.length||!S.set.cats.length)return;G.used=[];G.round=0;S.players.forEach(p=>p.score=0);nextRound()}
+async function nextRound(){S.phase='prep';clearTimeout(G.timer);G.round++;G.subs={};G.recs={};G.entries=[];S.players.forEach(p=>{p.ok=false;p.rdy=false});
+ const pool=S.set.cats.flatMap(c=>(CAT[c]||[]).map(f=>c+'/'+f));let fr=pool.filter(n=>!G.used.includes(n));if(!fr.length)fr=pool;shuffle(fr);let t=null;
+ for(const n of fr.slice(0,5)){try{await loadOne(n);t=n;break}catch{}}
+ if(!t)return bcast({t:'err',m:'Impossible de charger les sons. Vérifie le dossier sounds/.'});
+ G.used.push(t);G.target=t;bcast({t:'prep',round:G.round,total:S.set.rounds,target:t});pushState();G.timer=setTimeout(()=>{if(S.phase==='prep')toListen()},12000)}
+function toListen(){clearTimeout(G.timer);S.phase='listen';bcast({t:'listen',target:G.target,startAt:Date.now()+1500});G.timer=setTimeout(toCompose,1500+BUF[G.target].duration*1000+800)}
+function toCompose(){clearTimeout(G.timer);S.phase='compose';bcast({t:'compose',endAt:Date.now()+S.set.dur*1000});pushState();G.timer=setTimeout(toScore,S.set.dur*1000+5000)}
+async function toScore(){if(S.phase!=='compose')return;clearTimeout(G.timer);S.phase='score';bcast({t:'analyse'});
+ let T=null;try{T=feats(await mono16(BUF[G.target]))}catch(e){console.warn(e)}const es=[];
+ for(const p of S.players){const r=G.recs[p.id];if(!r)continue;try{const ab=await ctx.decodeAudioData(r.buf.slice(0));es.push({id:p.id,name:p.name,score:await score(T,ab),dur:ab.duration,buf:r.buf,mime:r.mime})}catch(e){console.warn('Analyse échouée',p.name,e)}}
+ es.sort((a,b)=>a.score-b.score);G.entries=es;if(!es.length)return toResults();bcast({t:'stage',entries:es});playNext(0)}
+function playNext(i){if(i>=G.entries.length)return toResults();const e=G.entries[i],st=Date.now()+(i?1200:3500);bcast({t:'play',i,startAt:st});G.timer=setTimeout(()=>playNext(i+1),st-Date.now()+e.dur*1000+3200)}
+function toResults(){clearTimeout(G.timer);S.phase='res';const g={};G.entries.forEach(e=>g[e.id]=e.score);S.players.forEach(p=>p.score+=g[p.id]||0);
+ bcast({t:'results',gained:g,scores:S.players.map(p=>({id:p.id,name:p.name,score:p.score})),last:G.round>=S.set.rounds})}
+function endGame(){clearTimeout(G.timer);S.phase='end';bcast({t:'end',scores:[...S.players].sort((a,b)=>b.score-a.score).map(p=>({name:p.name,score:p.score}))})}
+
+/* ---------- Réception (tous les joueurs, hôte compris) ---------- */
+function onMsg(m){switch(m.t){
+ case 'welcome':me.id=m.id;me.name=m.name;break;
+ case 'err':resetHome(m.m);break;
+ case 'pong':{const r=Date.now()-m.c;if(r<best){best=r;off=m.h+r/2-Date.now()}break}
+ case 'state':S.players=m.players;S.set=m.set;renderState();break;
+ case 'lobby':stopAll();show('lobby');break;
+ case 'prep':doPrep(m);break;
+ case 'listen':doListen(m);break;
+ case 'compose':doCompose(m);break;
+ case 'analyse':stopAll();ph='wait';panel('p-wait',3);break;
+ case 'stage':doStage(m);break;
+ case 'play':doPlay(m);break;
+ case 'results':doResults(m);break;
+ case 'end':doEnd(m);break}}
+
+function renderState(){
+ if($('#home').classList.contains('on'))show('lobby');
+ $('#codeV').textContent=code;$('#pcount').textContent=S.players.length+'/10';
+ $('#plist').innerHTML=S.players.map(p=>`<span class="chip">${av(p.name)}${p.id==='host'?'👑 ':''}${esc(p.name)}${p.id===me.id?' (toi)':''}</span>`).join('');
+ $('#setH').hidden=!isHost;$('#startB').hidden=!isHost;$('#waitH').hidden=isHost;$('#startB').disabled=!S.players.length||!S.set.cats.length;
+ if(isHost){$('#sR').value=S.set.rounds;$('#sD').value=S.set.dur;$('#sC').innerHTML=Object.keys(CAT).map(c=>`<button class="chip ${S.set.cats.includes(c)?'sel':''}" data-c="${esc(c)}">${esc(c)} (${CAT[c].length})</button>`).join('')}
+ else $('#waitH').textContent=`Manches : ${S.set.rounds} · Imitation : ${S.set.dur} s. En attente de l'hôte…`;
+ $$('.okbar').forEach(b=>b.innerHTML=S.players.map(p=>`<span class="chip ${p.ok?'ok':''}">${esc(p.name)}${p.ok?' ✓':''}</span>`).join(''))}
+
+async function doPrep(m){stopAll();ph='prep';tgt=m.target;panel('p-load',1);$('#lp').textContent=`Manche ${m.round}/${m.total}`;$('#lp2').textContent='Prépare-toi…';try{await loadOne(m.target)}catch{}toHost({t:'ready'})}
+function doListen(m){stopAll();ph='listen';panel('p-listen',1);$('#rn').textContent='🎧 Écoute…';playAt(m.target,(m.startAt-hostNow())/1000)}
+
+/* ---------- Imitation vocale ---------- */
+function doCompose(m){stopAll();ph='compose';take=null;recording=false;locked=false;pend=false;BUF.__take=null;panel('p-compose',2);renderRec();startTimer(m.endAt,S.set.dur)}
+function renderRec(){$('#rec').classList.toggle('on',recording);$('#rec').textContent=recording?'■':'●';$('#rec').disabled=locked;
+ $('#rst').textContent=locked?'Version envoyée ✓ En attente des autres…':recording?'Enregistrement… appuie pour arrêter':take?`Version enregistrée${BUF.__take?' ('+BUF.__take.duration.toFixed(1)+' s)':''}. Tu peux recommencer.`:'Appuie sur ● et imite le son avec ta voix';
+ $('#hear').disabled=!take||recording;$('#val').disabled=!take||recording||locked;$('#val').textContent=locked?'Validé ✓':'Valider'}
+function startRec(){if(!MS||locked||recording)return;stopAll();chunks=[];MR=new MediaRecorder(MS);MR.ondataavailable=e=>e.data.size&&chunks.push(e.data);
+ MR.onstop=async()=>{recording=false;const b=new Blob(chunks,{type:MR.mimeType});take={buf:await b.arrayBuffer(),mime:MR.mimeType};BUF.__take=await ctx.decodeAudioData(take.buf.slice(0)).catch(()=>null);renderRec();if(pend)validate()};
+ MR.start();recording=true;clearTimeout(maxT);maxT=setTimeout(stopRec,Math.min(S.set.dur*1000,((BUF[tgt]?BUF[tgt].duration:5)*2+2)*1000));renderRec()}
+function stopRec(){clearTimeout(maxT);if(MR&&MR.state==='recording')MR.stop()}
+function validate(){if(locked)return;if(recording){pend=true;stopRec();return}locked=true;renderRec();toHost({t:'submit',buf:take?take.buf:null,mime:take?take.mime:''})}
+$('#rec').onclick=()=>recording?stopRec():startRec();
+$('#hear').onclick=()=>{stopAll();playAt('__take',0)};$('#val').onclick=validate;
+
+/* ---------- Scène ---------- */
+function doStage(m){stopAll();ph='stage';E=m.entries;P=E.map((e,i)=>ctx.decodeAudioData(toAB(e.buf).slice(0)).then(b=>BUF['r'+i]=b).catch(()=>0));panel('p-stage',3);
+ $('#cards').innerHTML=E.map((e,i)=>`<div class="pc" id="pc${i}">${av(e.name)}<b>${esc(e.name)}</b><span class="sc">?</span></div>`).join('');setRing(null);$('#now').textContent='La scène se prépare…'}
+async function doPlay(m){const e=E[m.i];if(!e)return;stopAll();await P[m.i];$$('.pc').forEach(c=>c.classList.remove('cur'));const c=$('#pc'+m.i);c.classList.add('cur');
+ $('#now').innerHTML=av(e.name)+esc(e.name);setRing(null);const dl=(m.startAt-hostNow())/1000,d=playAt('r'+m.i,dl)||e.dur;
+ setTimeout(()=>{setRing(e.score);c.querySelector('.sc').textContent=e.score;c.classList.add('done')},Math.max(0,dl+d)*1000+300);setTimeout(()=>c.classList.remove('cur'),Math.max(0,dl+d)*1000+2800)}
+
+function doResults(m){stopAll();ph='res';panel('p-res',4);
+ const R=m.scores.map(s=>({...s,g:m.gained[s.id]||0}));
+ $('#rl').innerHTML=[...R].sort((a,b)=>b.g-a.g).map(r=>`<div class="snd">${av(r.name)}<span>${esc(r.name)}</span><div class="bar"><i style="width:${r.g}%"></i></div><b>+${r.g}</b></div>`).join('');
+ $('#sc').innerHTML=[...R].sort((a,b)=>b.score-a.score).map((s,i)=>`<div class="snd">${av(s.name)}<span>${i+1}. ${esc(s.name)}</span><b>${s.score} pts</b></div>`).join('');
+ $('#next').hidden=!isHost;$('#nw').hidden=isHost;$('#next').textContent=m.last?'Voir le classement final':'Manche suivante'}
+function doEnd(m){stopAll();stopTimer();show('end');$('#fin').innerHTML=m.scores.map((s,i)=>`<div class="snd">${av(s.name)}<span>${['🥇','🥈','🥉'][i]||i+1+'.'} ${esc(s.name)}</span><b>${s.score} pts</b></div>`).join('');$('#again').hidden=!isHost}
+
+/* ---------- Boutons ---------- */
+$('#create').onclick=create;$('#join').onclick=join;
+$('#cpCode').onclick=()=>navigator.clipboard.writeText(code).then(()=>toast('Code copié'));
+$('#cpLink').onclick=()=>navigator.clipboard.writeText(location.origin+location.pathname+'?code='+code).then(()=>toast('Lien copié'));
+$('#leave').onclick=()=>resetHome('');$('#quit').onclick=()=>resetHome('');$('#startB').onclick=startGame;
+$('#sR').onchange=e=>{S.set.rounds=+e.target.value;pushState()};$('#sD').onchange=e=>{S.set.dur=+e.target.value;pushState()};
+$('#sC').onclick=e=>{const c=e.target.dataset.c;if(!c)return;const a=S.set.cats;S.set.cats=a.includes(c)?a.filter(x=>x!==c):[...a,c];pushState()};
+$('#orig').onclick=()=>{stopAll();playAt(tgt,0)};
+$('#next').onclick=()=>G.round>=S.set.rounds?endGame():nextRound();
+$('#again').onclick=()=>{S.phase='lobby';S.players.forEach(p=>{p.ok=false;p.rdy=false});bcast({t:'lobby'});pushState()};
+$('#code').oninput=e=>e.target.value=e.target.value.toUpperCase();
+try{$('#name').value=localStorage.getItem('bn')||''}catch{}
+const q=new URLSearchParams(location.search).get('code');if(q)$('#code').value=q.toUpperCase().slice(0,5);
+addEventListener('pagehide',()=>{try{peer&&peer.destroy()}catch{}});
+</script></body></html>
