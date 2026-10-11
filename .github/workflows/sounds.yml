@@ -12,27 +12,37 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
       - uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface
           key: whisper-small
 
-      - name: Installer Whisper
+      - name: Installer Whisper (facultatif)
+        continue-on-error: true
         run: pip install faster-whisper
 
       - name: Scanner les sons et transcrire
         run: |
-          python3 - <<'PY'
+          python - <<'PY'
           import os, json
           exts = ('.mp3', '.ogg', '.wav')
           try:
               old = json.load(open('sounds/transcripts.json', encoding='utf-8'))
           except Exception:
               old = {}
+          try:
+              from faster_whisper import WhisperModel
+          except Exception:
+              WhisperModel = None
+              print('Whisper indisponible : transcriptions manuelles seulement')
           model = None
           data, tr = {}, {}
           for cat in sorted(os.listdir('sounds')):
@@ -49,12 +59,15 @@ jobs:
                       tr[key] = open(txt, encoding='utf-8').read().strip()
                   elif key in old:
                       tr[key] = old[key]
-                  else:
-                      if model is None:
-                          from faster_whisper import WhisperModel
-                          model = WhisperModel('small', device='cpu', compute_type='int8')
-                      segs, _ = model.transcribe(os.path.join(p, f), language='fr', vad_filter=True)
-                      tr[key] = ' '.join(s.text.strip() for s in segs).strip()
+                  elif WhisperModel:
+                      try:
+                          if model is None:
+                              model = WhisperModel('small', device='cpu', compute_type='int8')
+                          segs, _ = model.transcribe(os.path.join(p, f), vad_filter=True)
+                          tr[key] = ' '.join(s.text.strip() for s in segs).strip()
+                          print(key, '->', tr[key])
+                      except Exception as e:
+                          print('Échec transcription', key, e)
           json.dump(data, open('sounds/sounds.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
           json.dump(tr, open('sounds/transcripts.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
           PY
