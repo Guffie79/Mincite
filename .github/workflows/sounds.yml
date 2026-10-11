@@ -27,9 +27,11 @@ jobs:
 
       - name: Installer Whisper (facultatif)
         continue-on-error: true
-        run: pip install faster-whisper
+        run: |
+          python -m pip install -U pip
+          python -m pip install -U av faster-whisper
 
-      - name: Scanner les sons et transcrire
+      - name: Scanner les sons et remplir les transcriptions
         run: |
           python - <<'PY'
           import os, json
@@ -42,7 +44,7 @@ jobs:
               from faster_whisper import WhisperModel
           except Exception:
               WhisperModel = None
-              print('Whisper indisponible : transcriptions manuelles seulement')
+              print('Whisper indisponible : les nouveaux sons auront une transcription vide')
           model = None
           data, tr = {}, {}
           for cat in sorted(os.listdir('sounds')):
@@ -59,15 +61,17 @@ jobs:
                       tr[key] = open(txt, encoding='utf-8').read().strip()
                   elif key in old:
                       tr[key] = old[key]
-                  elif WhisperModel:
-                      try:
-                          if model is None:
-                              model = WhisperModel('small', device='cpu', compute_type='int8')
-                          segs, _ = model.transcribe(os.path.join(p, f), vad_filter=True)
-                          tr[key] = ' '.join(s.text.strip() for s in segs).strip()
-                          print(key, '->', tr[key])
-                      except Exception as e:
-                          print('Échec transcription', key, e)
+                  else:
+                      tr[key] = ''
+                      if WhisperModel:
+                          try:
+                              if model is None:
+                                  model = WhisperModel('small', device='cpu', compute_type='int8')
+                              segs, _ = model.transcribe(os.path.join(p, f), vad_filter=True)
+                              tr[key] = ' '.join(s.text.strip() for s in segs).strip()
+                              print(key, '->', tr[key])
+                          except Exception as e:
+                              print('Transcription impossible pour', key, ':', e)
           json.dump(data, open('sounds/sounds.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
           json.dump(tr, open('sounds/transcripts.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
           PY
