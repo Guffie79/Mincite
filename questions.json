@@ -1,0 +1,35 @@
+{
+  "classic": { "q": [] },
+  "hardcore": {
+    "q": [
+      "Quel est le crime le plus grave que {nom} a déjà commis sans jamais se faire prendre ?",
+      "Pour quel délit {nom} finirait-il en prison s'il se faisait arrêter demain ?",
+      "Quelle est la chose la plus dégueulasse que {nom} ait déjà mangée ou bue ?",
+      "Quelle est la pire chose que {nom} ait faite dans des toilettes ?",
+      "Quelle drogue {nom} a-t-il testée et regrette le plus ?",
+      "Quel est le pire plan cul de {nom} ? Donne les détails !",
+      "Quelle est la chose la plus sale que {nom} ait faite dans le lit de quelqu'un d'autre ?",
+      "Quel est l'endroit le plus risqué où {nom} a fait l'amour ?",
+      "Quel mensonge de {nom} a bousillé la vie de quelqu'un ?",
+      "Quelle trahison {nom} a-t-il commise sans jamais l'avouer ?",
+      "Quelle est la pire arnaque ou fraude que {nom} a faite ?",
+      "Quel est l'objet le plus cher que {nom} a volé ?",
+      "Quelle est la pire chose que {nom} ferait pour 100 000 euros ?",
+      "Quelle est la chose la plus répugnante que {nom} fait quand il est seul ?",
+      "Quelle bêtise de {nom} sous l'emprise de l'alcool pourrait lui valoir un procès ?",
+      "Quelle est la pire chose que {nom} a dite à quelqu'un juste pour le blesser ?",
+      "Quel secret de quelqu'un {nom} a-t-il balancé pour s'en tirer ?",
+      "Avec qui dans cette partie {nom} ne coucherait jamais, même en dernier recours ?",
+      "Quelle pratique sexuelle {nom} n'avouera jamais à personne ?",
+      "Quel serait le crime parfait selon {nom} ?",
+      "Quel délit {nom} recommencerait sans hésiter ?",
+      "Quelle est la recherche la plus glauque que {nom} a faite sur internet ?",
+      "Quelle conduite dangereuse au volant {nom} a-t-il déjà eue ?",
+      "Quelle est la pire chose que {nom} a faite à un ou une ex ?",
+      "Qui dans cette partie {nom} balancerait à la police pour sauver sa peau ?",
+      "Quelle est la chose la plus honteuse que {nom} a faite pour de l'argent ?",
+      "Quel est le truc le plus illégal que {nom} a fait en soirée ?",
+      "Quelle partie du corps de {nom} est la plus dégoûtante, selon toi ?"
+    ]
+  }
+}
